@@ -26,7 +26,6 @@ Thumbs.db
 *.log
 
 # Data & cache (optional, adjust to your project)
-data/
 chroma/
 cache/
 *.faiss

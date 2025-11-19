@@ -1,0 +1,65 @@
+The response by OpenAI's Responses API has the following format:
+
+Response(
+    id='resp_04a15caf27fb32b100691d32ce26708192a98485018be4e8df', 
+    created_at=1763521230.0, 
+    error=None, 
+    incomplete_details=None, 
+    instructions=None, 
+    metadata={}, 
+    model='gpt-4o-mini-2024-07-18', 
+    object='response', 
+    output=[
+        ResponseOutputMessage(
+            id='msg_04a15caf27fb32b100691d32cf3e648192b66a5d7dcbf709e6', 
+            content=[
+                ResponseOutputText(
+                    annotations=[], 
+                    logprobs=[], 
+                    text='AWS Bedrock is a managed service provided by Amazon Web Services (AWS) that allows users to access and utilize various foundational models (like machine learning models) through published API calls. It operates within the AWS global network security framework, ensuring infrastructure security and compliance with industry standards [source: doc1.pdf].', 
+                    type='output_text'
+                )
+            ], 
+            role='assistant', 
+            status='completed', 
+            type='message'
+        )
+    ], 
+    parallel_tool_calls=True, 
+    temperature=1.0, 
+    tool_choice='auto', 
+    tools=[], 
+    top_p=1.0, 
+    background=False, 
+    conversation=None, 
+    max_output_tokens=None, 
+    max_tool_calls=None, 
+    previous_response_id=None, 
+    prompt=None, 
+    prompt_cache_key=None, 
+    reasoning=Reasoning(
+        effort=None, 
+        generate_summary=None, 
+        summary=None
+    ), 
+    safety_identifier=None, 
+    service_tier='default', 
+    status='completed', 
+    text=ResponseTextConfig(
+        format=ResponseFormatText(type='text'), 
+        verbosity='medium'
+    ), 
+    top_logprobs=0, 
+    truncation='disabled', 
+    usage=ResponseUsage(
+        input_tokens=631, 
+        input_tokens_details=InputTokensDetails(cached_tokens=0), 
+        output_tokens=62, 
+        output_tokens_details=OutputTokensDetails(reasoning_tokens=0), 
+        total_tokens=693
+    ), 
+    user=None, 
+    billing={'payer': 'developer'}, 
+    prompt_cache_retention=None, 
+    store=True
+)
