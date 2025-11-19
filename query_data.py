@@ -1,6 +1,6 @@
 from dotenv import load_dotenv
 from openai import OpenAI
-from prompt import PROMPT_TEMPLATE
+from prompt_template import PROMPT_TEMPLATE
 import os
 
 load_dotenv()
