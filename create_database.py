@@ -60,42 +60,13 @@ def embed_chunks_to_vectorstore(chunks):
     
     print(f"Embedding complete. Vector store saved to {CHROMA_DIR}.")
     return vector_store
-    
-    # embedded_chunks = []
-    # for chunk in chunks:
-    #     response = client.embeddings.create(input=chunk["text"], model=CONFIG["EMBED_MODEL"])
-    #     vector = response.data[0].embedding
-    #     embedded_chunks.append({
-    #         "text": chunk["text"],
-    #         "source": chunk["source"],
-    #         "embedding": vector
-    #     })
-    # return embedded_chunks
-
 
 def generate_data_store():
     if not CHROMA_DIR.exists():
-        print("No existing vector store found. Building a new one...")
-        
         documents = load_or_download_pdf()
-        print(f"Loaded {len(documents)} pages from PDF.")
-
         chunks = split_documents_into_chunks(documents)
-        print(f"Split into {len(chunks)} text chunks for embedding.")
-
         vector_store = embed_chunks_to_vectorstore(chunks)
-        print("Vector store creation complete.\n")
     else:
-        print("Existing vector store found. Loading...")
         vector_store = Chroma(embedding_function=EMBEDDINGS, persist_directory=CHROMA_DIR,)
-        print("Vector store loaded.\n")
 
     return vector_store
-
-
-
-# The "batch size" error occurs when the total size of all chunks sent at once to the embedding API exceeds the model's maximum input size.
-# Therefore, we must both:
-#   1. Keep chunks reasonably small (e.g., 500-1000 characters)
-#   2. Embed documents in **smaller batches** (e.g., 500 chunks at a time)
-# This ensures that each API call stays within limits and avoids batch size errors.
