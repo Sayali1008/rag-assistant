@@ -1,0 +1,14 @@
+{
+    'ids': ['0:0'], 
+    'embeddings': None, 
+    'documents': ["[Topic]: Supervised Learning\n[Question]: What is supervised learning in machine learning?\n[Answer]: Supervised learning is a type of machine learning where a model is trained on a labeled dataset. In this context, 'labeled' means that each training example is paired with an output label. The goal is for the model to learn a mapping from inputs to outputs so that it can predict the output for new, unseen data. This approach is commonly used for tasks such as classification and regression."], 
+    'uris': None, 
+    'included': ['metadatas', 'documents'], 
+    'data': None, 
+    'metadatas': [
+        {
+            'topic': 'Supervised Learning', 
+            'idx': '0:0'
+        }
+    ]
+}

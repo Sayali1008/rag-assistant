@@ -1,107 +1,120 @@
 # RAG System Prototype
 
-This repository contains a Retrieval-Augmented Generation (RAG) prototype built using LangChain, ChromaDB, and OpenAI's embedding and LLM APIs. It downloads the AWS Bedrock User Guide, embeds it into a vector store, and answers user queries using relevant document context.
+This repository contains a Retrieval-Augmented Generation (RAG) system built using Chroma from LangChain, for bulding the vector database, and OpenAI's APIs. It constructs a synthetic dataset using several topics from the machine learning paradigm and stores this data as a question-answering JSON in `ml_algorithms.json`. Then, we can query on the data.
 
 ---
-
-## RAG Architecture Diagram
-```
-            ┌─────────────────────────┐
-            │        User Query       │
-            └────────────┬────────────┘
-                         │
-                         ▼
-              ┌────────────────────┐
-              │    Vector Store    │
-              │    (ChromaDB)      │
-              └─────────┬──────────┘
-                        │ Similarity Search
-                        ▼
-            ┌───────────────────────────┐
-            │ Retrieved Relevant Chunks │
-            └────────────┬──────────────┘
-                         │ Context Assembly
-                         ▼
-            ┌───────────────────────────┐
-            │     Prompt Template       │
-            │ (Context + User Question) │
-            └────────────┬──────────────┘
-                         │
-                         ▼
-            ┌───────────────────────────┐
-            │  OpenAI LLM (gpt-4o-mini) │
-            └────────────┬──────────────┘
-                         │ Generated Answer
-                         ▼
-            ┌──────────────────────────┐
-            │       Final Output       │
-            └──────────────────────────┘
-```
 
 ## Project Structure
 ```
 .
-├── main.py
+├── data/
+├── chroma/            # Persisted Chroma vector store
+├── generate_data.py
 ├── create_database.py
 ├── query_data.py
-├── prompt.py
-├── data/              # Downloaded PDFs
-├── chroma/            # Persisted Chroma vector store
-└── requirements.txt
+├── prompt_template.py
+└── main.py
 ```
 
 ---
 
-## Working
 
-This repository implements a traditional Retrieve→Augment→Generate pipeline.
+## Testing the System
 
-### **1. Document Loading**
+This section covers new test questions, what this RAG system should handle, and its limitations based on the `ml_algorithms.json` dataset.
 
-* The AWS Bedrock User Guide PDF is downloaded if not already present.
-* The PDF is parsed page-by-page.
+---
 
-### **2. Text Chunking**
+### New Questions to Test the RAG System
 
-The PDF is split into overlapping text chunks:
+These questions are **not in the dataset** but are answerable by combining content from it.
 
-* `chunk_size = 700`
-* `chunk_overlap = 100`
+#### Supervised Learning
+- How is supervised learning different from unsupervised learning?  
+- Why is cross-validation important in supervised learning?  
+- What problems typically require regression vs classification?
 
-Chunking allows the embedding model to process text while maintaining context.
+#### Linear Regression
+- How do outliers affect a linear regression model?  
+- When should you prefer multiple linear regression over simple linear regression?
 
-### **3. Embedding and Vector Store Creation**
+#### Logistic Regression
+- Why do logistic regression models use the log-odds instead of predicting values directly?  
+- How would you interpret an odds ratio greater than 1?
 
-* Embeddings are generated with **OpenAI text-embedding-3-small**.
-* ChromaDB is used as the persistent vector store.
-* Chunks are embedded **in batches** to avoid API input-size errors.
+#### Decision Trees / Random Forest / Gradient Boosting
+- Why are decision trees prone to overfitting?  
+- How do Random Forests reduce variance in predictions?  
+- Why do gradient boosting models require careful tuning?  
+- What does “tree depth” influence in boosting models?
 
-📌 **Batch Size Notes:**
+#### SVM
+- How does the margin of an SVM affect its generalization?  
+- When would you choose a linear kernel over an RBF kernel?
 
-* The OpenAI embedding API limits input size per request.
-* Sending too many chunks at once causes:
-  `ValueError: Batch size ... exceeds max batch size ...`
-* Therefore, chunk text must be small *and* embedding requests must be batched.
+#### K-NN
+- Why does KNN perform poorly on high-dimensional data?  
+- What happens if you choose k=1 in KNN?
 
-### **4. Retrieval**
+#### Naive Bayes
+- Why does Naive Bayes work well for text classification despite its independence assumption?  
+- How does Laplace smoothing change probability estimates?
 
-For a given query:
+#### Neural Networks
+- What problem do activation functions solve?  
+- Why do deep networks suffer from vanishing gradients?
 
-* The vector store performs **semantic similarity search**.
-* Returned items include `(Document, score)` pairs.
+#### Unsupervised Learning / Clustering / Dimensionality Reduction
+- When would you use PCA instead of t-SNE?  
+- Why is determining the number of clusters difficult in clustering?  
+- What is the purpose of a silhouette score?
 
-📌 **Score Notes:**
+#### Reinforcement Learning
+- How is reward different from a label?  
+- What is the role of a policy in reinforcement learning?
 
-* The score is a *distance* metric.
-* A **lower score** indicates a **closer match** to the query.
+#### RAG
+- Why does RAG often produce more factual answers than a plain LLM?  
+- What role does retrieval play in reducing hallucinations?
 
-### **5. Context Packaging**
+#### Zero-Shot Learning
+- How do semantic attributes help a model classify unseen categories?  
+- Why is ZSL useful for tasks with constantly changing labels?
 
-* Retrieved document chunks are formatted with metadata.
-* Context is truncated if it exceeds `max_chars = 3000` to keep prompts manageable.
+---
 
-### **6. LLM Response Generation**
+### What This RAG System *Should* Be Able to Answer
 
-* A prompt template inserts the context and the user query.
-* OpenAI `gpt-4o-mini` is used to generate a response.
+The system should answer questions that are:
+- Directly stated in the dataset  
+- Paraphrased from dataset content  
+- Combinations of 1–3 related facts
 
+**Examples:**
+- Definitions (`What is XGBoost?`, `What is dimensionality reduction?`)  
+- Comparisons implicitly covered (`How is Gradient Boosting different from Random Forest?`)  
+- Advantages / disadvantages of algorithms  
+- Assumptions (linear regression, logistic regression)  
+- Hyperparameters and roles (Random Forest, LightGBM, XGBoost)  
+- High-level RL concepts (exploration/exploitation, model-free vs model-based)  
+- RAG architecture questions  
+- Zero-shot learning concepts
+
+---
+
+### What the RAG System *Cannot* Answer
+
+It cannot handle:
+- Numerical calculations or derivations  
+- Code examples or step-by-step implementations  
+- Best-algorithm recommendations  
+- Real-world domain-specific advice  
+- Tasks not explicitly covered in the dataset  
+
+**Concrete examples:**
+- “Explain LSTMs vs GRUs.”  
+- “How do transformers work?”  
+- “Derive the logistic regression cost function.”  
+- “Write PyTorch code for a CNN.”  
+- “Which algorithm is best for fraud detection?”  
+- “How do you evaluate a retrieval quality score?”  
