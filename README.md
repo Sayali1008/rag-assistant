@@ -1,4 +1,4 @@
-# RAG System Prototype
+# Retrieval-Augmented Generation on Machine Learning QA Dataset
 
 This repository contains a Retrieval-Augmented Generation (RAG) system built using Chroma from LangChain, for bulding the vector database, and OpenAI's APIs. It constructs a synthetic dataset using several topics from the machine learning paradigm and stores this data as a question-answering JSON in `ml_algorithms.json`. Then, we can query on the data.
 
@@ -8,7 +8,7 @@ This repository contains a Retrieval-Augmented Generation (RAG) system built usi
 ```
 .
 ├── data/
-├── chroma/            # Persisted Chroma vector store
+├── chroma/
 ├── generate_data.py
 ├── create_database.py
 ├── query_data.py
